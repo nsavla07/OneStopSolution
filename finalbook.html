@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking and Payment Page</title>
+  <link rel="stylesheet" href="finalbook.css">
+</head>
+<body>
+  <form method="post" action="finalbook.php"></form>
+
+  <div id="maindiv" style="opacity: 0.85;">
+  <div class="container">
+    <div class="booking-box">
+      <h1>Booking Details</h1>
+      <div id="booking-section">
+        <label for="date"><h4>Select Date:</h4></label>
+        <input type="date" id="date" min="" required>
+        <h4>Time Slot:</h4>
+        <div class="time-slots">
+          <div class="time-slot">
+            <select id="from-time">
+              <!-- Dropdown options for time -->
+              
+              <option value="07:00 AM">07:00 AM</option>
+              <option value="08:00 AM">08:00 AM</option>
+              <option value="09:00 AM">09:00 AM</option>
+              <option value="10:00 AM">10:00 AM</option>
+              <option value="11:00 AM">11:00 AM</option>
+              <option value="12:00 PM">12:00 PM</option>
+              <option value="01:00 PM">01:00 PM</option>
+              <option value="02:00 PM">02:00 PM</option>
+              <option value="03:00 PM">03:00 PM</option>
+              <option value="04:00 PM">04:00 PM</option>
+              <option value="05:00 PM">05:00 PM</option>
+              <option value="06:00 PM">06:00 PM</option>
+              <option value="07:00 PM">07:00 PM</option>
+              <option value="08:00 PM">08:00 PM</option>
+              <option value="09:00 PM">09:00 PM</option>
+              <option value="10:00 PM">10:00 PM</option>
+              
+              <!-- Add more options as needed -->
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="description" style="padding-left: 3%; padding-right: 3%;">
+        <h4>Description:</h4>
+        <textarea id="userInput" name="userInput" placeholder="Add Description if any (optional)" rows="6" cols="50" style="padding: 3%;"></textarea>
+    </div>
+
+    <div class="payment-box">
+      <h1>Payment Details</h1>
+      <div id="payment-section">
+        <title>Select Payment Method</title>
+        <label for="payment-method">Select Payment Method:</label>
+        <select id="payment-method">
+          <option value="">Select Payment Method</option>
+          <option value="gpay">Google Pay</option>
+          <option value="card">Credit/Debit Card</option>
+          <option value="upi">UPI</option>
+        </select>
+
+        <!-- Card details section -->
+        <div id="card-details" style="display: none;">
+          <label for="card-number">Card Number:</label>
+          <input type="text" id="card-number" placeholder="Enter card number">
+
+          <label for="expiry-date">Expiry Date:</label>
+          <input type="text" id="expiry-date" placeholder="MM/YYYY">
+
+          <label for="cvv">CVV:</label>
+          <input type="text" id="cvv" placeholder="Enter CVV">
+        </div>
+
+        <!-- UPI details section -->
+        <div id="upi-details" style="display: none;">
+          <label for="upi-id">UPI ID:</label>
+          <input type="text" id="upi-id" placeholder="Enter UPI ID">
+        </div>
+
+        <!-- Google Pay details section -->
+        <div id="gpay-details" style="display: none;">
+          <label for="gpay-number">Google Pay Number:</label>
+          <input type="text" id="gpay-number" placeholder="Enter Google Pay number">
+        </div>
+      </div>
+    </div>
+
+    <button id="submit-btn">Confirm Booking</button>
+  </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const dateInput = document.getElementById("date");
+      const fromTimeSelect = document.getElementById("from-time");
+      const toTimeSelect = document.getElementById("to-time");
+      const paymentMethodSelect = document.getElementById("payment-method");
+      const cardDetailsSection = document.getElementById("card-details");
+      const upiDetailsSection = document.getElementById("upi-details");
+      const gpayDetailsSection = document.getElementById("gpay-details");
+      const submitBtn = document.getElementById("submit-btn");
+  
+      // Set min date to current date
+      const today = new Date();
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+      const yyyy = today.getFullYear();
+      const minDate = yyyy + '-' + mm + '-' + dd;
+      dateInput.setAttribute("min", minDate);
+  
+      // Show/hide payment details sections based on payment method selection
+      paymentMethodSelect.addEventListener("change", function() {
+        const selectedValue = paymentMethodSelect.value;
+        cardDetailsSection.style.display = selectedValue === "card" ? "block" : "none";
+        upiDetailsSection.style.display = selectedValue === "upi" ? "block" : "none";
+        gpayDetailsSection.style.display = selectedValue === "gpay" ? "block" : "none";
+      });
+  
+      // Submit form
+      submitBtn.addEventListener("click", function(event) {
+        event.preventDefault();
+        if (validateForm()) {
+          alert("Booking is confirmed!");
+          window.location.href = "home.html";
+        }
+      });
+  
+      function validateForm() {
+        if (!dateInput.value) {
+          alert("Please select a date.");
+          return false;
+        }
+  
+        // Validate payment method selection
+        if (paymentMethodSelect.value === "") {
+          alert("Please select a payment method.");
+          return false;
+        }
+  
+        // Validate payment details based on selected payment method
+        const selectedPaymentMethod = paymentMethodSelect.value;
+        if (selectedPaymentMethod === "card" && !validateCardDetails()) {
+          return false;
+        } else if (selectedPaymentMethod === "upi" && !validateUpiDetails()) {
+          return false;
+        } else if (selectedPaymentMethod === "gpay" && !validateGpayDetails()) {
+          return false;
+        }
+  
+        return true;
+      }
+  
+      function validateCardDetails() {
+        const cardNumber = document.getElementById("card-number").value;
+        const expiryDate = document.getElementById("expiry-date").value;
+        const cvv = document.getElementById("cvv").value;
+  
+        if (!cardNumber || !expiryDate || !cvv) {
+          alert("Please fill in all card details.");
+          return false;
+        }
+  
+        return true;
+      }
+  
+      function validateUpiDetails() {
+        const upiId = document.getElementById("upi-id").value;
+  
+        if (!upiId) {
+          alert("Please fill in UPI ID.");
+          return false;
+        }
+  
+        return true;
+      }
+  
+      function validateGpayDetails() {
+        const gpayNumber = document.getElementById("gpay-number").value;
+  
+        if (!gpayNumber) {
+          alert("Please fill in Google Pay number.");
+          return false;
+        }
+  
+        return true;
+      }
+  
+      // Populate "To" time options based on "From" time selection
+      fromTimeSelect.addEventListener("change", function() {
+        updateToTimeOptions();
+      });
+  
+      function updateToTimeOptions() {
+        const fromTime = fromTimeSelect.value;
+        const startTime = parseTime(fromTime);
+        toTimeSelect.innerHTML = ''; // Clear existing options
+        for (let i = 1; i <= 12; i++) {
+          const hour = (startTime.hour + i) % 12 || 12;
+          const meridiem = startTime.hour + i >= 12 ? 'PM' : 'AM';
+          const time = hour + ':' + (startTime.minute < 10 ? '0' : '') + startTime.minute + ' ' + meridiem;
+          const option = document.createElement('option');
+          option.text = time;
+          option.value = time;
+          toTimeSelect.appendChild(option);
+        }
+      }
+  
+      function parseTime(timeString) {
+        const splitTime = timeString.split(':');
+        const hour = parseInt(splitTime[0]);
+        const minute = parseInt(splitTime[1].split(' ')[0]);
+        const meridiem = splitTime[1].split(' ')[1];
+        if (meridiem === 'PM' && hour !== 12) {
+          return { hour: hour + 12, minute: minute };
+        } else if (meridiem === 'AM' && hour === 12) {
+          return { hour: 0, minute: minute };
+        } else {
+          return { hour: hour, minute: minute };
+        }
+      }
+    });
+  </script>
+  
+</body>
+</html>

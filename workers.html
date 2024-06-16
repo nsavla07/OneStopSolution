@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Registration Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            color: white;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid black;
+            border-radius: 5px;
+            background-color: black;
+            opacity: 0.8;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-inline {
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-inline .form-group {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .form-inline .form-group:last-child {
+            margin-right: 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-actions {
+            text-align: right;
+        }
+        .form-actions button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-actions button:hover {
+            background-color: #bbd7f4;
+            opacity: 0.8;
+        }
+    </style>
+    <script>
+        function validateForm() {
+            const form = document.forms["registrationForm"];
+            const firstName = form["firstName"].value;
+            const lastName = form["lastName"].value;
+            const age = form["age"].value;
+            const gender = form["gender"].value;
+            const service = form["service"].value;
+            const mobile = form["mobile"].value;
+            const email = form["email"].value;
+
+            // Regular expression to allow only alphabets (with optional spaces for multi-word names)
+            const nameRegex = /^[a-zA-Z\s]+$/;
+            if (!nameRegex.test(firstName)) {
+                alert("First Name can only contain alphabets.");
+                return false;
+            }
+            if (!nameRegex.test(lastName)) {
+                alert("Last Name can only contain alphabets.");
+                return false;
+            }
+
+            // Validate age and ensure it's 21 or above
+            const ageNum = parseInt(age);
+            if (isNaN(ageNum) || ageNum < 21) {
+                alert("Age must be 21 or above.");
+                return false;
+            }
+
+            // Validate mobile number (10-digit pattern)
+            const mobileRegex = /^\d{10}$/;
+            if (!mobileRegex.test(mobile)) {
+                alert("Mobile number must be 10 digits.");
+                return false;
+            }
+
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert("Invalid email address.");
+                return false;
+            }
+
+            if (gender === "" || service === "") {
+                alert("Please fill in all required fields.");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <div class="form-container">
+        <h2 style="text-align: center;">Registration Form</h2> 
+        <form method="post" action="workers.php">
+            <div class="form-group">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
+            <div class="form-group">
+                <label for="mobile">Mobile Number:</label>
+                <input type="text" id="mobile" name="mobile" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" required>
+            </div>
+            <div class="form-inline">
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">-- Select Gender --</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="non-binary">Non-binary</option>
+                        <option value="prefer-not-to-say">Prefer not to say</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" min="21" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="service">Service:</label>
+                <select id="service" name="service" required>
+                    <option value="">-- Select Service --</option>
+                    <option value="house-cleaner">House Cleaner</option>
+                    <option value="chef">Chef</option>
+                    <option value="plumber">Plumber</option>
+                    <option value="electrician">Electrician</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="experience">Experience:</label>
+                <textarea id="experience" name="experience" placeholder="Describe your experience here..." rows="4"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Register</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
